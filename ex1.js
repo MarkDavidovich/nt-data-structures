@@ -18,44 +18,49 @@ class UniqueArray {
   }
 
   exists(item) {
-    let itemExists;
-    if (typeof item !== "object") {
-      itemExists = this.uniqueKeys[item] ? true : false;
-    } else if (Array.isArray(item)) {
-      itemExists = false;
+    for (let element of this.uniqueArray) {
+      if (element === item) return true;
 
-      this.uniqueArray.find((arr) => {
-        if (!Array.isArray(arr)) return false;
-
-        if (arr.length === item.length && item.every((e, idx) => e === arr[idx])) {
-          itemExists = true;
+      if (Array.isArray(element) && Array.isArray(item)) {
+        if (this.checkArray(element, item)) {
           return true;
         }
+      }
 
-        return false;
-      });
-    } else {
-      if (item) {
-        //check to see if object and not undefined or null
-        {
-          for (let obj of this.uniqueArray) {
-            if (typeof obj === "object" && obj !== null && !Array.isArray(obj)) {
-              let existingKeys = Object.keys(obj);
-              let keysToCheck = Object.keys(item);
-              for (let key of existingKeys) {
-                if (obj[key] !== item[key]) {
-                  itemExists = false;
-                  break;
-                }
-                itemExists = true;
-                break;
-              }
-            }
-          }
+      if (typeof element === "object" && typeof item === "object" && element !== null && item !== null && !Array.isArray(element) && !Array.isArray(item)) {
+        if (this.checkObject(element, item)) {
+          return true;
         }
       }
     }
-    console.log(itemExists);
+    return false;
+  }
+
+  checkArray(a, b) {
+    if (a.length !== b.length) return false;
+
+    for (let i = 0; i < a.length; i++) {
+      if (a[i] !== b[i]) {
+        return false;
+      }
+      return true;
+    }
+  }
+
+  checkObject(a, b) {
+    if (a === null || b === null) return false;
+
+    let keysA = Object.keys(a);
+    let keysB = Object.keys(b);
+
+    if (keysA.length !== keysB.length) return false;
+
+    for (let key of keysA) {
+      if (a[key] !== b[key]) {
+        return false;
+      }
+    }
+    return true;
   }
 
   get(index) {
@@ -70,16 +75,16 @@ uniqueStuff.add("toy");
 uniqueStuff.showAll(); //prints ["toy"]
 uniqueStuff.add("ball");
 uniqueStuff.showAll();
-uniqueStuff.exists("toy"); //returns true
-uniqueStuff.exists("ball"); //returns true
-uniqueStuff.exists("computer"); //returns false
+console.log(uniqueStuff.exists("toy")); //returns true
+console.log(uniqueStuff.exists("ball")); //returns true
+console.log(uniqueStuff.exists("computer")); //returns false
 console.log(uniqueStuff.get(0));
 console.log(uniqueStuff.get(1));
 console.log(uniqueStuff.get(4));
 uniqueStuff.add([1, 2, 3]);
 uniqueStuff.add({ a: 1 });
 uniqueStuff.showAll();
-uniqueStuff.exists([1, 2, 3]);
-uniqueStuff.exists([1, 2, 3, 4]);
-uniqueStuff.exists({ a: 1 });
-uniqueStuff.exists({ a: 2 });
+console.log(uniqueStuff.exists([1, 2, 3]));
+console.log(uniqueStuff.exists([1, 2, 3, 4]));
+console.log(uniqueStuff.exists({ a: 1 }));
+console.log(uniqueStuff.exists({ a: 2 }));
